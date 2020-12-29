@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model companies {
+  id              Int               @id @default(autoincrement())
+  name            String?
+  image_url       String?
+  created_at      DateTime?
+  company_detail  company_detail[]
+  company_reviews company_reviews[]
+}
+
+model company_detail {
+  id          Int        @id @default(autoincrement())
+  site_url    String?
+  location    String?
+  curriculum  String?
+  description String?
+  cost        String?
+  period      String?
+  week        String?
+  company_id  Int?
+  created_at  DateTime?
+  companies   companies? @relation(fields: [company_id], references: [id])
+
+  @@index([company_id], name: "FK_company_detail_company_id_companies_id")
+}
+
+model company_reviews {
+  id                 Int               @id @default(autoincrement())
+  title              String?
+  rating             Float?
+  advantages_content String?
+  weakness_content   String?
+  created_at         DateTime?
+  user_id            Int?
+  company_id         Int?
+  companies          companies?        @relation(fields: [company_id], references: [id])
+  users              users?            @relation(fields: [user_id], references: [id])
+  itemized_rating    itemized_rating[]
+
+  @@index([company_id], name: "FK_company_reviews_company_id_companies_id")
+  @@index([user_id], name: "FK_company_reviews_user_id_users_id")
+}
+
+model itemized_rating {
+  id                Int              @id @default(autoincrement())
+  a_rating          Float?
+  b_rating          Float?
+  c_rating          Float?
+  d_rating          Float?
+  e_rating          Float?
+  company_review_id Int?
+  company_reviews   company_reviews? @relation(fields: [company_review_id], references: [id])
+
+  @@index([company_review_id], name: "FK_itemized_rating_company_review_id_company_reviews_id")
+}
+
+model users {
+  id              Int               @id @default(autoincrement())
+  email           String?
+  password        String?
+  nickname        String?
+  created_at      DateTime?
+  company_reviews company_reviews[]
+}
