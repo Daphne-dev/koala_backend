@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const {UserService} = require('../services')
 
 const signup = async (req, res, next) => {
     try{
@@ -8,7 +9,7 @@ const signup = async (req, res, next) => {
         const hashPassword = await bcrypt.hash(password, 12)
         
         const createUser = await UserService.createUser({
-            eamil,
+            email,
             password: hashPassword,
             nickname
         })
